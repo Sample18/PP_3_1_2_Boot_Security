@@ -11,7 +11,10 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -50,7 +53,7 @@ public class AdminController {
     @PostMapping(value = "/edit")
     public String updateUser(@ModelAttribute("user") User user, @RequestParam(value = "selectedRoles", required = false) String[] selectedRoles) {
         List<String> roleNames = Arrays.asList(selectedRoles);
-        List<Role> roles = roleService.findByNameIn(roleNames);
+        Set<Role> roles = new HashSet<>(roleService.findByNameIn(roleNames));
         user.setRoles(roles);
         userService.update(user);
         return "redirect:/admin";
@@ -66,7 +69,7 @@ public class AdminController {
     @PostMapping(value = "/new")
     public String createUser(@ModelAttribute("user") User user, @RequestParam(value = "selectedRoles", required = false) String[] selectedRoles) {
         List<String> roleNames = Arrays.asList(selectedRoles);
-        List<Role> roles = roleService.findByNameIn(roleNames);
+        Set<Role> roles = new HashSet<>(roleService.findByNameIn(roleNames));
         user.setRoles(roles);
         user.setPassword(new BCryptPasswordEncoder(8).encode(user.getPassword()));
         userService.create(user);
